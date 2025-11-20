@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Employee Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background: #f2f2f2; }
+  </style>
+</head>
+<body>
+
+<h2>My Approval History</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Project</th>
+      <th>Task</th>
+      <th>Hours</th>
+      <th>Status</th>
+      <th>Manager Note</th>
+    </tr>
+  </thead>
+  <tbody id="historyBody"></tbody>
+</table>
+
+<script>
+// Redirect if not logged in
+if (!sessionStorage.getItem("user")) {
+  window.location.href = "index.html";
+}
+
+function loadHistory() {
+  const employee = sessionStorage.getItem("user");
+
+  fetch("https://script.google.com/macros/s/AKfycbx6KLVE0bmIvteAzcMBxFDSzhjifd5sBPzrycWrIfJrX6DLKqFMNvQuv784Hg03W0uu5w/exec", {
+    method: "POST",
+    body: new URLSearchParams({
+      action: "getHistory",
+      employee: employee
+    })
+  })
+
+  .then(r => r.json())
+  .then(history => {
+    const body = document.getElementById("historyBody");
+    body.innerHTML = "";
+
+    history.forEach(row => {
+      body.innerHTML += `
+        <tr>
+          <td>${row.date}</td>
+          <td>${row.project}</td>
+          <td>${row.task}</td>
+          <td>${row.hours}</td>
+          <td>${row.status}</td>
+          <td>${row.note}</td>
+        </tr>
+      `;
+    });
+  });
+}
+
+window.onload = loadHistory;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+      width: 300px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Login</h2>
+
+  <input id="user" placeholder="Username" /><br><br>
+  <input id="pass" placeholder="Password" type="password"/><br><br>
+
+  <button onclick="login()">Login</button>
+
+  <p id="result" style="color:red"></p>
+</div>
+
+<script>
+function login() {
+  const username = document.getElementById("user").value;
+  const password = document.getElementById("pass").value;
+
+ fetch("https://script.google.com/macros/s/AKfycbx6KLVE0bmIvteAzcMBxFDSzhjifd5sBPzrycWrIfJrX6DLKqFMNvQuv784Hg03W0uu5w/exec", {
+    method: "POST",
+    body: new URLSearchParams({
+      action: "login",
+      username: username,
+      password: password
+    })
+})
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === "success") {
+
+      // Save login in sessionStorage
+      sessionStorage.setItem("role", data.role);
+      sessionStorage.setItem("user", username);
+
+      if (data.role === "manager") {
+        window.location.href = "ManagerDashboard.html";
+      } else {
+        window.location.href = "EmployeeDashboard.html";
+      }
+
+    } else {
+      document.getElementById("result").textContent = "Invalid login!";
+    }
+  });
+}
+</script>
+
+</body>
+</html>
